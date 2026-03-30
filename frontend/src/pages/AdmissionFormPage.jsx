@@ -84,11 +84,15 @@ export default function AdmissionFormPage() {
         e.preventDefault();
         const errs = validate();
         if (Object.keys(errs).length > 0) { 
+            console.log('Validation Errors:', errs);
             setErrors(errs); 
             // Better UX: go to first step with errors
             if (errs.student_name || errs.college_admn_no || errs.dob || errs.photo) setStep(1);
             else if (errs.permanent_address || errs.district) setStep(2);
             else setStep(3);
+            
+            // Show an alert so the user knows why it didn't submit
+            alert('Please fix the errors in the form before submitting. Check all 3 steps.');
             return; 
         }
         setLoading(true);
