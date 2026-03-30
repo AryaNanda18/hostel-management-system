@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import API from '../api/axios';
+import API, { BASE_URL } from '../api/axios';
 import { useNavigate } from 'react-router-dom';
 
 /* ─── step tracker ──────────────────────────────────────────────────────── */
@@ -191,10 +191,10 @@ export default function StudentDashboard() {
                     {/* Documents */}
                     <div className="dash-card">
                         <h2>📄 Your Documents</h2>
-                        <div className="info-row"><span>Photo</span><strong style={{ cursor: 'pointer', textDecoration: 'underline' }} onClick={() => window.open(`http://localhost:5000/${student.photo_path}`)}>View</strong></div>
-                        <div className="info-row"><span>Caste Certificate</span><strong style={{ cursor: 'pointer', textDecoration: 'underline' }} onClick={() => window.open(`http://localhost:5000/${student.caste_certificate_path}`)}>View</strong></div>
+                        <div className="info-row"><span>Photo</span><strong style={{ cursor: 'pointer', textDecoration: 'underline' }} onClick={() => window.open(`${BASE_URL}/${student.photo_path}`)}>View</strong></div>
+                        <div className="info-row"><span>Caste Certificate</span><strong style={{ cursor: 'pointer', textDecoration: 'underline' }} onClick={() => window.open(`${BASE_URL}/${student.caste_certificate_path}`)}>View</strong></div>
                         {student.document_path && (
-                            <div className="info-row"><span>Other Document</span><strong style={{ cursor: 'pointer', textDecoration: 'underline' }} onClick={() => window.open(`http://localhost:5000/${student.document_path}`)}>View</strong></div>
+                            <div className="info-row"><span>Other Document</span><strong style={{ cursor: 'pointer', textDecoration: 'underline' }} onClick={() => window.open(`${BASE_URL}/${student.document_path}`)}>View</strong></div>
                         )}
                     </div>
 

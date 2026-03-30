@@ -53,8 +53,10 @@ def compute_priority_rank():
 
 
 def compile_approved_message(student_name, admission_no):
+    import os
+    frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:5173')
     # Public Payment Link
-    payment_link = f"http://localhost:5173/pay?admn={admission_no}"
+    payment_link = f"{frontend_url}/pay?admn={admission_no}"
     
     return (
         f"Your hostel application has been approved. Please complete the hostel fee payment using the link below within the allotted time: {payment_link}"

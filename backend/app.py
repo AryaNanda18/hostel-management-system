@@ -38,6 +38,11 @@ def create_app():
         
     return app
 
+app = create_app()
+
+@app.route('/')
+def home():
+    return {"message": "Hostel Management System API is running"}
+
 if __name__ == '__main__':
-    app = create_app()
     app.run(debug=True, port=5000)

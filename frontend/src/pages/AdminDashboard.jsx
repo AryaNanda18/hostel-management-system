@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import API from '../api/axios';
+import API, { BASE_URL } from '../api/axios';
 import { useNavigate } from 'react-router-dom';
 
 /* ─── helper ─────────────────────────────────────────────────────────────── */
@@ -356,15 +356,15 @@ export default function AdminDashboard() {
                                 <div className="doc-section">
                                     <div className="doc-item">
                                         <strong>Passport Photo:</strong><br />
-                                        <img src={`http://localhost:5000/${selected.photo_path}`} alt="Student" className="student-photo" />
+                                        <img src={`${BASE_URL}/${selected.photo_path}`} alt="Student" className="student-photo" />
                                     </div>
                                     <div className="doc-links">
-                                        <a href={`http://localhost:5000/api/admin/export-excel?dummy=1`} target="_blank" rel="noreferrer" className="doc-link" style={{display:'none'}}> {/* hidden dummy */} </a>
-                                        <a href={`http://localhost:5000/${selected.caste_certificate_path}`} target="_blank" rel="noreferrer" className="doc-link">
+                                        <a href={`${BASE_URL}/api/admin/export-excel?dummy=1`} target="_blank" rel="noreferrer" className="doc-link" style={{display:'none'}}> {/* hidden dummy */} </a>
+                                        <a href={`${BASE_URL}/${selected.caste_certificate_path}`} target="_blank" rel="noreferrer" className="doc-link">
                                             📄 View Caste Certificate
                                         </a>
                                         {selected.document_path && (
-                                            <a href={`http://localhost:5000/${selected.document_path}`} target="_blank" rel="noreferrer" className="doc-link">
+                                            <a href={`${BASE_URL}/${selected.document_path}`} target="_blank" rel="noreferrer" className="doc-link">
                                                 📄 Other Document
                                             </a>
                                         )}
