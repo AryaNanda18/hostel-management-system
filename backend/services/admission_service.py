@@ -59,7 +59,7 @@ def compile_approved_message(student_name, admission_no):
     payment_link = f"{frontend_url}/pay?admn={admission_no}"
     
     return (
-        f"Your hostel application has been approved. Please complete the hostel fee payment using the link below within the allotted time: {payment_link}"
+        f"Dear {student_name}, your hostel application has been approved. Please complete the hostel fee payment using the link below within the allotted time: {payment_link}"
     )
 
 
@@ -73,7 +73,7 @@ def compile_rejected_message(student_name, rejection_reason):
 
 def compile_credentials_message(student_name, username, password):
     return (
-        f"Your payment has been verified. Your student portal credentials are:\n"
+        f"Dear {student_name}, your payment has been verified. Your student portal credentials are:\n"
         f"Username: {username}\n"
         f"Password: {password}\n"
         f"Please log in and change your password."
