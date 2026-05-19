@@ -1,17 +1,18 @@
+from datetime import datetime, timedelta, timezone
 from flask import Blueprint, request, jsonify, current_app
+import jwt
 from models.admin import Admin
 from models.student_application import StudentApplication
 from werkzeug.security import check_password_hash
-import jwt
-from datetime import datetime, timedelta
 
 auth_bp = Blueprint('auth', __name__)
+
 
 @auth_bp.route('/admin/login', methods=['POST'])
 def admin_login():
     data = request.get_json()
     if not data or not data.get('username') or not data.get('password'):
-        return jsonify({'message': 'Could not verify'}), 401
+        return jsonify({'message': 'Missing username or password'}), 401
 
     admin = Admin.query.filter_by(username=data.get('username')).first()
 
@@ -21,16 +22,17 @@ def admin_login():
     token = jwt.encode({
         'id': admin.id,
         'role': 'admin',
-        'exp': datetime.utcnow() + timedelta(hours=24)
+        'exp': datetime.now(timezone.utc) + timedelta(hours=24)
     }, current_app.config['SECRET_KEY'], algorithm="HS256")
 
     return jsonify({'token': token})
+
 
 @auth_bp.route('/student/login', methods=['POST'])
 def student_login():
     data = request.get_json()
     if not data or not data.get('admission_no') or not data.get('password'):
-        return jsonify({'message': 'Could not verify'}), 401
+        return jsonify({'message': 'Missing admission number or password'}), 401
 
     student = StudentApplication.query.filter_by(
         hostel_admission_no=data.get('admission_no'),
@@ -43,7 +45,7 @@ def student_login():
     token = jwt.encode({
         'id': student.id,
         'role': 'student',
-        'exp': datetime.utcnow() + timedelta(hours=24)
+        'exp': datetime.now(timezone.utc) + timedelta(hours=24)
     }, current_app.config['SECRET_KEY'], algorithm="HS256")
 
     return jsonify({'token': token})

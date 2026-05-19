@@ -1,3 +1,4 @@
+import os
 import string
 import random
 from models import db
@@ -40,8 +41,8 @@ def compute_priority_rank():
             cat_priority = 3
         else:
             cat_priority = 4
-            
-        # Distance (farther distance gets higher priority usually? The prompt says "if priority is same, then sort by distance if applicable" - higher distance should probably come first, so negative distance_km)
+
+        # Distance
         distance_val = -float(app.distance_km)
         return (cat_priority, distance_val)
 
@@ -53,13 +54,14 @@ def compute_priority_rank():
 
 
 def compile_approved_message(student_name, admission_no):
-    import os
     frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:5173')
     # Public Payment Link
     payment_link = f"{frontend_url}/pay?admn={admission_no}"
-    
+
     return (
-        f"Dear {student_name}, your hostel application has been approved. Please complete the hostel fee payment using the link below within the allotted time: {payment_link}"
+        f"Dear {student_name}, your hostel application has been approved. "
+        f"Please complete the hostel fee payment using the link below "
+        f"within the allotted time: {payment_link}"
     )
 
 

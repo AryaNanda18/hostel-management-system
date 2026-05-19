@@ -1,5 +1,5 @@
 from . import db
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 class StudentApplication(db.Model):
@@ -45,7 +45,7 @@ class StudentApplication(db.Model):
     whatsapp_approval_sent = db.Column(db.Boolean, default=False)
     whatsapp_credentials_sent = db.Column(db.Boolean, default=False)
 
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     def to_dict(self):
         return {

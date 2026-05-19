@@ -2,8 +2,6 @@ from flask import Blueprint, jsonify, request
 from models.student_application import StudentApplication
 from models import db
 from utils.auth import token_required
-from datetime import datetime
-import random, string
 
 student_bp = Blueprint('student', __name__)
 

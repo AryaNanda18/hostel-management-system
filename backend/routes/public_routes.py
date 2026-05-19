@@ -1,8 +1,8 @@
+from datetime import datetime, timezone
+import random
 from flask import Blueprint, jsonify, request
 from models.student_application import StudentApplication
 from models import db
-from datetime import datetime
-import random, string
 
 public_bp = Blueprint('public', __name__)
 
@@ -10,20 +10,46 @@ public_bp = Blueprint('public', __name__)
 @public_bp.route('/fee-info/<path:admission_no>', methods=['GET'])
 def get_payment_info(admission_no):
     """Public endpoint — returns fee info by admission number (no auth)."""
-    app = StudentApplication.query.filter_by(hostel_admission_no=admission_no).first()
-    if not app:
+    application = StudentApplication.query.filter_by(hostel_admission_no=admission_no).first()
+    if not application:
         return jsonify({'message': 'Admission number not found'}), 404
-    if app.application_status != 'Approved':
+    if application.application_status != 'Approved':
         return jsonify({'message': 'Application is not approved yet'}), 400
     return jsonify({
-        'student_name': app.student_name,
-        'hostel_admission_no': app.hostel_admission_no,
-        'admission_fee': app.admission_fee,
-        'caution_deposit': app.caution_deposit,
-        'college_admn_no': app.college_admn_no,
-        'category': app.category,
-        'instructions': 'Please complete the hostel fee payment manually after coming to college within the allotted date. No online payments are accepted.'
+        'student_name': application.student_name,
+        'hostel_admission_no': application.hostel_admission_no,
+        'admission_fee': application.admission_fee,
+        'caution_deposit': application.caution_deposit,
+        'college_admn_no': application.college_admn_no,
+        'category': application.category,
+        'instructions': (
+            'Please complete the hostel fee payment manually after coming to college '
+            'within the allotted date. No online payments are accepted.'
+        )
     })
+
+
+@public_bp.route('/mark-paid/<path:admission_no>', methods=['POST'])
+def mark_paid(admission_no):
+    """Public endpoint — student self-reports offline payment completion."""
+    application = StudentApplication.query.filter_by(hostel_admission_no=admission_no).first()
+    if not application:
+        return jsonify({'message': 'Admission number not found'}), 404
+
+    if application.application_status != 'Approved':
+        return jsonify({'message': 'Application is not in an approved state'}), 400
+
+    if application.payment_status == 'Verified':
+        return jsonify({'message': 'Payment already verified by admin'}), 400
+
+    if application.payment_status == 'Paid':
+        return jsonify({'message': 'Payment already marked as paid. Awaiting admin verification.'}), 400
+
+    application.payment_status = 'Paid'
+    application.payment_date = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
+    db.session.commit()
+
+    return jsonify({'message': 'Payment marked as paid. Please await admin verification.'}), 200
 
 
 @public_bp.route('/seed-database-hidden', methods=['GET'])
@@ -56,8 +82,10 @@ def seed_database():
 
     def get_category(caste):
         c = caste.lower()
-        if "sc" in c: return "SC"
-        elif "st" in c: return "ST"
+        if "sc" in c:
+            return "SC"
+        elif "st" in c:
+            return "ST"
         elif any(x in c for x in ["ezhava", "thiyya", "mappila", "muslim", "viswakarma", "vaniya", "obch", "obc"]):
             return "OBCH"
         return "General"
@@ -71,7 +99,7 @@ def seed_database():
             continue
 
         cat = get_category(s["caste"])
-        app = StudentApplication(
+        new_app = StudentApplication(
             student_name=s["name"],
             semester_branch=s["branch"],
             let_status="No",
@@ -96,8 +124,8 @@ def seed_database():
             caste_certificate_path="uploads/documents/default.pdf",
             application_status="Pending",
         )
-        db.session.add(app)
+        db.session.add(new_app)
         count += 1
-    
+
     db.session.commit()
     return jsonify({'message': f'✅ Successfully seeded {count} students! ({skipped} skipped).'})

@@ -181,6 +181,22 @@ export default function AdminDashboard() {
         } finally { setLoading(false); }
     };
 
+    /* ── export priority list ── */
+    const handleExportPriority = () => {
+        API.get('/admin/export-priority-excel', { responseType: 'blob' })
+            .then(response => {
+                const downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                link.setAttribute('download', 'priority_list.xlsx');
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                flash('✅ Priority list exported as priority_list.xlsx');
+            })
+            .catch(() => flash('❌ Export failed.'));
+    };
+
     /* ── counts ── */
     const counts = {
         total:    applications.length,
@@ -389,7 +405,12 @@ export default function AdminDashboard() {
                     <div className="priority-view">
                         <div className="priority-header">
                             <h2>📊 Automated Priority Sorting (Pending)</h2>
-                            <button className="btn btn-outline" onClick={() => setViewMode('list')}>← Back</button>
+                            <div style={{ display: 'flex', gap: '0.75rem' }}>
+                                <button className="btn btn-outline" onClick={handleExportPriority} title="Export priority list to Excel">
+                                    📥 Export Priority List
+                                </button>
+                                <button className="btn btn-outline" onClick={() => setViewMode('list')}>← Back</button>
+                            </div>
                         </div>
                         <p className="priority-desc">Rules: <strong>SC → ST → OEC → OBCH → Distance</strong></p>
                         {priorityList.length === 0 ? (
